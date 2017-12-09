@@ -1,5 +1,6 @@
 import javax.swing.JFrame;
 import java.awt.*;
+import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.util.Arrays;
@@ -15,7 +16,9 @@ public class Display {
     private static Graphics bufferGraphics;
     private static int clearColor;
 
-    public static void create(int width, int height, String title, int _clearColor){
+    private static BufferStrategy bufferStrategy;
+
+    public static void create(int width, int height, String title, int _clearColor, int numbuffer){
         if(created) return;                     //checking display
 
         window = new JFrame(title);
@@ -36,6 +39,9 @@ public class Display {
         bufferGraphics = buffer.getGraphics();                                          //get picture
         clearColor = _clearColor;
 
+        content.createBufferStrategy(numbuffer);
+        bufferStrategy = content.getBufferStrategy();
+
         created = true;
     }
 
@@ -46,13 +52,17 @@ public class Display {
     public static void render() {
         bufferGraphics.setColor(new Color(0xffffff00));
         bufferGraphics.fillOval(350,250,100,100);
-        bufferGraphics.setColor(new Color(0xff0000ff));
-        bufferGraphics.fillRect(0, 0, 50, 50);
+
+        ((Graphics2D) bufferGraphics).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON); // it is smoothing
+        bufferGraphics.fillOval(50,250,100,100);
+        ((Graphics2D) bufferGraphics).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+
     }
 
     public static void swapBuffers(){
-        Graphics g = content.getGraphics();
+        Graphics g = bufferStrategy.getDrawGraphics();
         g.drawImage(buffer, 0, 0, null);
+        bufferStrategy.show();
     }
 
 
