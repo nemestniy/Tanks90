@@ -13,11 +13,17 @@ public class Game implements Runnable{
     public static final float UPDATE_INTERVAL = Time.SECOND / UPDATE_RATE;
     public static final long IDLE_TIME = 1;
 
+    public static final String ATLAS_FILE_NAME = "texture_atlas.png";
+
     private boolean running;
     private Thread gameThread;
     private Graphics2D graphics;
 
     private Input input;
+
+    private TextureAtlas atlas;
+    private SpriteSheet sheet;
+    private Sprite sprite;
 
     //temp
     int x = 350;
@@ -33,7 +39,9 @@ public class Game implements Runnable{
         graphics = Display.getGraphics();
         input = new Input();
         Display.addInputListener(input);
-
+        atlas = new TextureAtlas(ATLAS_FILE_NAME);
+        sheet = new SpriteSheet(atlas.cut(8*16, 8*16, 32, 16), 2, 16);      //take a tank
+        sprite = new Sprite(sheet, 1);                                                          //create individual sprite for tank
     }
 
     public synchronized void start(){
@@ -76,8 +84,7 @@ public class Game implements Runnable{
     private void render(){
         Display.clear();
 
-        graphics.setColor(Color.white);
-        graphics.fillOval(x, y, 100, 100);
+        sprite.render(graphics, x, y);              //draw tank
 
         Display.swapBuffers();
     }
@@ -107,7 +114,7 @@ public class Game implements Runnable{
                 upd++;
                 delta--;
                 if(render){
-                    updl++;
+                    updl++;             //check lost updates
                 } else {
                     render = true;
                 }
