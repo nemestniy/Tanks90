@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.awt.event.KeyEvent;
 
 public class Game implements Runnable{
 
@@ -16,11 +17,22 @@ public class Game implements Runnable{
     private Thread gameThread;
     private Graphics2D graphics;
 
+    private Input input;
+
+    //temp
+    int x = 350;
+    int y = 250;
+
+
+    //temp end
+
 
     public Game(){
         running = false;
         Display.create(WIDTH, HEIGHT, TITLE, CLEAR_COLOR, NUM_BUFFERS);
         graphics = Display.getGraphics();
+        input = new Input();
+        Display.addInputListener(input);
 
     }
 
@@ -47,14 +59,25 @@ public class Game implements Runnable{
     }
 
     private void update(){
-
+        if(input.getKey(KeyEvent.VK_UP)){
+            y -= 5;
+        }
+        if(input.getKey(KeyEvent.VK_DOWN)){
+            y += 5;
+        }
+        if(input.getKey(KeyEvent.VK_LEFT)){
+            x -= 5;
+        }
+        if(input.getKey(KeyEvent.VK_RIGHT)){
+            x += 5;
+        }
     }
 
     private void render(){
         Display.clear();
 
         graphics.setColor(Color.white);
-        graphics.fillOval(350, 250, 100, 100);
+        graphics.fillOval(x, y, 100, 100);
 
         Display.swapBuffers();
     }
